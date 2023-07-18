@@ -5,10 +5,13 @@ import { nanoid } from 'nanoid'
 import TodoItem from "./TodoItem";
 
 import './index.css'
+import Modal from "./Modal";
 
 const TodoList = ({changeMode}) => {
 
     const [showErrorModal, setShowErrorModal] = useState(false);
+    const [showCongratsModal, setShowCongratsModal] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [action, setAction] = useState('');
     
 
@@ -32,6 +35,7 @@ const TodoList = ({changeMode}) => {
 
     const deleteAllCompleted = () => {
         setTodoItems(todoItems.filter(item => !item.isDone));
+        setShowConfirmModal(false)
     }
 
     const onChange = (event) => {
@@ -41,6 +45,15 @@ const TodoList = ({changeMode}) => {
     const closeErrorModal = () => {
         setShowErrorModal(false);
     }
+
+    const closeConfirmModal = () => {
+        setShowConfirmModal(false)
+    }
+
+    const closeCongratsModal = () => {
+        setShowCongratsModal(false);
+    }
+
 
     const addTodo = (event) => {
         event.preventDefault();
@@ -68,7 +81,14 @@ const TodoList = ({changeMode}) => {
 
     const calculateProgress = () => {
         const resolvedItems = todoItems.filter(({ isDone }) => isDone).length;
-        return resolvedItems ? `${resolvedItems/todoItems.length * 100}%` : '0';
+        const calculateWidth = (resolvedItems / todoItems.length) * 100;
+
+        // need to change
+        // if (calculateWidth === 100) {
+        //     setShowCongratsModal(true);
+        // }
+
+        return resolvedItems ? `${calculateWidth}%` : '0';
     };
 
 
@@ -81,13 +101,38 @@ const TodoList = ({changeMode}) => {
                 classNames="modal"
                 unmountOnExit
             >
-                <div className="modal">
-                    <span className="close" onClick={closeErrorModal}>X</span>
+                <Modal onClick={closeErrorModal}>
                     <span>You need to write something!</span>
-                </div>
+                </Modal>
             </CSSTransition>
 
-            <div className={showErrorModal ? 'todo-wrapper blur' : 'todo-wrapper'}>
+
+            <CSSTransition
+                in={showCongratsModal}
+                timeout={500}
+                classNames="modal"
+                unmountOnExit
+            >
+                <Modal onClick={closeCongratsModal}>
+                        <span>Congratulations, you complete all tasks!!!</span>
+                </Modal>
+            </CSSTransition>
+
+
+            <CSSTransition
+                in={showConfirmModal}
+                timeout={500}
+                classNames="modal"
+                unmountOnExit
+            >
+                <Modal onClick={closeConfirmModal}>
+                    <span>Are you sure?</span>
+                    <button onClick={deleteAllCompleted}>yes</button>
+                    <button onClick={closeConfirmModal}>no</button>
+                </Modal>
+            </CSSTransition>
+
+            <div className={showErrorModal || showConfirmModal || showCongratsModal ? 'todo-wrapper blur' : 'todo-wrapper'}>
                 <button onClick={changeMode} >Change Theme</button>
 
                 <h1>TODOLIST</h1>
@@ -122,7 +167,7 @@ const TodoList = ({changeMode}) => {
                                 }
                             </div>
 
-                            <button onClick={deleteAllCompleted} className='remove-completed-btn'>Remove all completed todos</button>
+                            <button onClick={() => setShowConfirmModal(true)} className='remove-completed-btn'>Remove all completed todos</button>
 
                             <h3>Your Progress:</h3>
                             <div className="progressbar-wrapper">

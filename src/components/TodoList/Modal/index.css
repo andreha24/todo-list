@@ -1,0 +1,33 @@
+.modal{
+    position: absolute;
+    font-size: 20px;
+    background-color: salmon;
+    padding: 30px;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
+
+.close {
+    position: absolute;
+    cursor: pointer;
+    top: 5px;
+    right: 5px;
+}
+
+.modal-enter {
+    opacity: 0;
+}
+.modal-enter-active {
+    opacity: 1;
+    transition: opacity 400ms;
+}
+.modal-exit {
+    opacity: 1;
+}
+.modal-exit-active {
+    opacity: 0;
+    transition: opacity 400ms;
+}
